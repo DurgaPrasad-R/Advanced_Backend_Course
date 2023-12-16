@@ -1,0 +1,24 @@
+{
+  "name": "advancedbackend",
+  "version": "1.0.0",
+  "description": "This is an Advanced Backend Course offered by Prashanth Reddy",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "backend",
+    "fullstack"
+  ],
+  "author": "Durga Prasad",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DurgaPrasad-R/Advanced_Backend_Course.git#main"
+  },
+  "bugs": {
+    "url": "https://github.com/DurgaPrasad-R/ReactJS/issues"
+  },
+  "homepage": "https://github.com/DurgaPrasad-R/ReactJS/tree/main#readme"
+}
