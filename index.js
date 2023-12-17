@@ -1,7 +1,8 @@
+// eslint-disable-next-line space-before-function-paren
 function hello() {
-  console.log("Hello NodeJs");
+  console.log('Hello NodeJs')
 }
-hello();
+hello()
 
 // REPL Commands (READ EVAL PRINT LOOP)
 /*
