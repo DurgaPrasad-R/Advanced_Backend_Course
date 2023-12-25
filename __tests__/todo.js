@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const todoList = require("../todo");
 
-const { all, markAsCompleted, add, overdue } = todoList();
+const { all, markAsCompleted, add, overdue, dueToday } = todoList();
 
 describe("TodoList Test Suite", () => {
   beforeAll(() => {
@@ -26,7 +26,6 @@ describe("TodoList Test Suite", () => {
     markAsCompleted(0);
     expect(all[0].completed).toBe(true);
   });
-
   test("To Check for the retrieval of OverDue items", () => {
     const currentDate = new Date();
     const yesterday = new Date();
@@ -39,5 +38,16 @@ describe("TodoList Test Suite", () => {
     });
     const overdueTasks = overdue();
     expect(overdueTasks.length).toBe(befOverDue.length + 1);
+  });
+  test("To Check for the retrieval of DueTasks today", () => {
+    const currentDate = new Date();
+    const befdueTasks = dueToday();
+    add({
+      title: "Overdue Task",
+      completed: false,
+      dueDate: currentDate.toISOString().split("T")[0],
+    });
+    const newdueTasks = dueToday();
+    expect(newdueTasks.length).toBe(befdueTasks.length + 1);
   });
 });
