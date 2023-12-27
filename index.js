@@ -1,50 +1,88 @@
-const http = require("http");
-const fs = require("fs");
+const { connect } = require("./connectDB.js");
+const Todo = require("./TodoModel.js");
 
-let homeContent = "";
-let projectContent = "";
-let registerContent = "";
-const args = require("minimist")(process.argv.slice(2), {
-  default: {
-    port: 4000,
-  },
-});
-fs.readFile("home.html", (err, home) => {
-  if (err) {
-    throw err;
+const createTodo = async () => {
+  try {
+    await connect();
+    const todo = await Todo.addTask({
+      title: "Second Item",
+      dueDate: new Date(),
+      completed: false,
+    });
+    console.log(`Created todo with ID : ${todo.id}`);
+  } catch (error) {
+    console.error(error);
   }
-  homeContent = home;
-});
-fs.readFile("project.html", (err, project) => {
-  if (err) {
-    throw err;
+};
+
+const countItems = async () => {
+  try {
+    const totalCount = await Todo.count();
+    console.log(`Found ${totalCount} items in the table!`);
+  } catch (error) {
+    console.error(error);
   }
-  projectContent = project;
-});
-fs.readFile("registration.html", (err, register) => {
-  if (err) {
-    throw err;
+};
+const getAllTodos = async () => {
+  try {
+    const todos = await Todo.findAll();
+    const todoList = todos.map((todo) => todo.displayableString()).join("\n");
+    console.log(todoList);
+  } catch (error) {
+    console.error(error);
   }
-  registerContent = register;
-});
-http
-  .createServer((req, res) => {
-    let url = req.url;
-    res.writeHeader(200, { "Content-Type": "text/html" });
-    switch (url) {
-      case "/project":
-        res.write(projectContent);
-        res.end();
-        break;
-      case "/register":
-        res.write(registerContent);
-        res.end();
-        break;
-      default:
-        res.write(homeContent);
-        res.end();
-    }
-  })
-  .listen(args.port, () => {
-    console.log(`Server running at port: ${args.port}`);
-  });
+};
+const getSingleTodo = async () => {
+  try {
+    const todo = await Todo.findOne({
+      where: {
+        completed: false,
+      },
+      order: [["id", "DESC"]],
+    });
+
+    console.log(todo.displayableString());
+  } catch (error) {
+    console.error(error);
+  }
+};
+const updateItem = async (id) => {
+  try {
+    const todo = await Todo.update(
+      { completed: true },
+      {
+        where: {
+          id: id,
+        },
+      },
+    );
+
+    console.log(todo.displayableString());
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const deleteItem = async (id) => {
+  try {
+    const deletedRowCount = await Todo.destroy({
+      where: {
+        id: id,
+      },
+    });
+
+    console.log(`Deleted ${deletedRowCount} rows!`);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+(async () => {
+  await createTodo();
+  await countItems();
+  await getAllTodos();
+  await updateItem(2);
+  await deleteItem(2);
+  await getSingleTodo();
+  await getAllTodos();
+})();
