@@ -1,5 +1,5 @@
 const { connect } = require("./connectDB.js");
-const Todo = require("./TodoModel.js");
+const Todo = require("./models/todo.js");
 
 const createTodo = async () => {
   try {
@@ -23,6 +23,7 @@ const countItems = async () => {
     console.error(error);
   }
 };
+// };
 const getAllTodos = async () => {
   try {
     const todos = await Todo.findAll();
@@ -31,6 +32,9 @@ const getAllTodos = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+const display = async () => {
+  Todo.showList();
 };
 const getSingleTodo = async () => {
   try {
@@ -81,8 +85,10 @@ const deleteItem = async (id) => {
   await createTodo();
   await countItems();
   await getAllTodos();
+  await display();
+  // await markAsComplete();
   await updateItem(2);
-  await deleteItem(2);
+  await deleteItem(9);
   await getSingleTodo();
   await getAllTodos();
 })();
