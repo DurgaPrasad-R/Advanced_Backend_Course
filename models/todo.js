@@ -15,17 +15,23 @@ module.exports = (sequelize, DataTypes) => {
 
       console.log("Overdue");
       const dueYes = await this.overdue();
-      console.log(dueYes);
+      dueYes.forEach((item) => {
+        console.log(item.displayableString());
+      });
       console.log("\n");
 
       console.log("Due Today");
       const dueTod = await this.dueToday();
-      console.log(dueTod);
+      dueTod.forEach((item) => {
+        console.log(item.displayableString());
+      });
       console.log("\n");
 
       console.log("Due Later");
       const FutureDue = await this.dueLater();
-      console.log(FutureDue);
+      FutureDue.forEach((item) => {
+        console.log(item.displayableString());
+      });
       console.log("\n");
     }
 
@@ -38,8 +44,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       });
-      const todoList = Items.map((todo) => todo.displayableString()).join("\n");
-      return todoList;
+      return Items;
     }
 
     static async dueToday() {
@@ -51,8 +56,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       });
-      const todoList = Items.map((todo) => todo.displayableString()).join("\n");
-      return todoList;
+      return Items;
     }
 
     static async dueLater() {
@@ -64,8 +68,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       });
-      const todoList = Items.map((todo) => todo.displayableString()).join("\n");
-      return todoList;
+      return Items;
     }
 
     static async markAsComplete(id) {

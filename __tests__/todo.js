@@ -1,66 +1,80 @@
 /* eslint-disable no-undef */
-const todoList = require("../todo");
+const db = require("../models");
 
-const { all, markAsCompleted, add, overdue, dueToday, dueLater } = todoList();
+describe("Todolist Test Suite", () => {
+  beforeAll(async () => {
+    await db.sequelize.sync({ force: true });
+  });
 
-describe("TodoList Test Suite", () => {
-  beforeAll(() => {
-    add({
+  test("Should add new todo", async () => {
+    const todoItemsCount = await db.Todo.count();
+    await db.Todo.addTask({
+      title: "Test todo",
+      completed: false,
+      dueDate: new Date(),
+    });
+    const newTodoItemsCount = await db.Todo.count();
+    expect(newTodoItemsCount).toBe(todoItemsCount + 1);
+  });
+
+  test("Should mark todo as Complete", async () => {
+    const newTodo = await db.Todo.addTask({
       title: "Test Todo",
       completed: false,
-      dueDate: new Date().toLocaleDateString("en-CA"),
+      dueDate: new Date(),
     });
-  });
-  test("Should add new todo", () => {
-    const todoItemCount = all.length;
-    add({
-      title: "Test Todo",
-      completed: false,
-      dueDate: new Date().toLocaleDateString("en-CA"),
-    });
-    expect(all.length).toBe(todoItemCount + 1);
+
+    expect(newTodo.completed).toBe(false);
+
+    await db.Todo.markAsComplete(newTodo.id);
+    const markedTodo = await db.Todo.findByPk(newTodo.id);
+
+    expect(markedTodo.completed).toBe(true);
   });
 
-  test("Should mark todo as Complete", () => {
-    expect(all[0].completed).toBe(false);
-    markAsCompleted(0);
-    expect(all[0].completed).toBe(true);
-  });
-  test("To Check for the retrieval of OverDue items", () => {
+  test("To Check for the retrieval of OverDue items", async () => {
+    const befOverdue = await db.Todo.overdue();
     const currentDate = new Date();
     const yesterday = new Date();
     yesterday.setDate(currentDate.getDate() - 1);
-    const befOverDue = overdue();
-    add({
+
+    await db.Todo.addTask({
       title: "Overdue Task",
       completed: false,
       dueDate: yesterday.toISOString().split("T")[0],
     });
-    const overdueTasks = overdue();
-    expect(overdueTasks.length).toBe(befOverDue.length + 1);
+
+    const overdueTasks = await db.Todo.overdue();
+    expect(overdueTasks.length).toBe(befOverdue.length + 1);
   });
-  test("To Check for the retrieval of DueTasks today", () => {
-    const currentDate = new Date();
-    const befdueTasks = dueToday();
-    add({
-      title: "Overdue Task",
+
+  test("To Check for the retrieval of DueTasks today", async () => {
+    const befDueToday = await db.Todo.dueToday();
+
+    await db.Todo.addTask({
+      title: "Today Task",
       completed: false,
-      dueDate: currentDate.toISOString().split("T")[0],
+      dueDate: new Date().toISOString().split("T")[0],
     });
-    const newdueTasks = dueToday();
-    expect(newdueTasks.length).toBe(befdueTasks.length + 1);
+
+    const dueTodayTasks = await db.Todo.dueToday();
+    expect(dueTodayTasks.length).toBe(befDueToday.length + 1);
   });
-  test("To Check for the retrieval of Future Tasks", () => {
+
+  test("To Check for the retrieval of Future Tasks", async () => {
+    const befDueLater = await db.Todo.dueLater();
+
     const currentDate = new Date();
-    const tomDate = new Date();
-    tomDate.setDate(currentDate.getDate() + 1);
-    const befdueTasks = dueLater();
-    add({
+    const tomorrow = new Date();
+    tomorrow.setDate(currentDate.getDate() + 1);
+
+    await db.Todo.addTask({
       title: "Future Task",
       completed: false,
-      dueDate: tomDate.toISOString().split("T")[0],
+      dueDate: tomorrow.toISOString().split("T")[0],
     });
-    const newdueTasks = dueLater();
-    expect(newdueTasks.length).toBe(befdueTasks.length + 1);
+
+    const dueLaterTasks = await db.Todo.dueLater();
+    expect(dueLaterTasks.length).toBe(befDueLater.length + 1);
   });
 });

@@ -4,12 +4,13 @@
   "description": "This is an Advanced Backend Course offered by Prashanth Reddy",
   "main": "index.js",
   "scripts": {
-    "db:create:test": "SET NODE_ENV=test npx sequelize-cli db:create",
-    "pretest": "SET NODE_ENV=test npx sequelize-cli db:drop && SET NODE_ENV=test npx sequelize-cli db:create",
-    "test": "SET NODE_ENV=test jest --detectOpenHandles",
+    "db:create:test": "SET NODE_ENV=test&& npx sequelize-cli db:create",
+    "pretest": "SET NODE_ENV=test&& npx sequelize-cli db:drop && SET NODE_ENV=test&& npx sequelize-cli db:create",
+    "test": "jest --detectOpenHandles",
     "start": "nodemon index.js",
     "prepare": "husky install"
-  },
+  }
+  ,
   "lint-staged": {
     "*.js": [
       "eslint",
